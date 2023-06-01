@@ -1,0 +1,249 @@
+package syst
+public
+  with Data_Model;
+  with Base_Types;
+
+-- Define the data types
+data CarCount
+    properties
+        Data_Model::base_type => (classifier (Base_Types::Integer));
+    end CarCount;
+
+data CheckLight
+    properties
+        Data_Model::base_type => (classifier (Base_Types::Boolean));
+    end CheckLight;
+
+data ButtonState
+    properties
+        Data_Model::base_type => (classifier (Base_Types::Boolean));
+    end ButtonState;
+
+data TrafficLightColor
+    properties
+        Data_Model::Enumerators => ("Red", "Yellow", "Green");
+        Data_Model::base_type => (classifier (Base_Types::Integer));
+    end TrafficLightColor;
+
+data PedestrianLightColor
+    properties
+        Data_Model::Enumerators => ("Red", "Green");
+        Data_Model::base_type => (classifier (Base_Types::Integer));
+    end PedestrianLightColor;
+    
+data LightMode
+    properties
+        Data_Model::Enumerators => ("Day", "Night");
+        Data_Model::base_type => (classifier (Base_Types::Integer));
+    end LightMode;
+
+-- Define the memory
+memory RAM
+end RAM;
+
+memory implementation RAM.impl
+end RAM.impl;
+
+-- Define the bus
+bus CAN
+end CAN;
+
+bus implementation CAN.impl
+end CAN.impl;
+
+-- Define the devices
+device CarSensor
+    features
+        detected: out event data port CarCount;
+    end CarSensor;
+
+device implementation CarSensor.impl
+end CarSensor.impl;
+
+device PedestrianButton
+    features
+        pressed: out event data port ButtonState;
+    end PedestrianButton;
+
+device implementation PedestrianButton.impl
+end PedestrianButton.impl;
+
+device PedestrianLight
+    features
+        state: in data port PedestrianLightColor;
+    end PedestrianLight;
+
+device implementation PedestrianLight.impl
+end PedestrianLight.impl;
+
+device LightSensor
+    features
+        checkLight: out data port CheckLight;
+    end LightSensor;
+
+device implementation LightSensor.impl
+end LightSensor.impl;
+
+device TrafficLights
+    features
+        state: in data port TrafficLightColor;
+    end TrafficLights;
+
+device implementation TrafficLights.impl
+end TrafficLights.impl;
+
+-- Define the controller threads
+
+thread CarSensorThread
+features
+  carCount: in event data port CarCount;
+end CarSensorThread;
+
+thread implementation CarSensorThread.impl
+end CarSensorThread.impl;
+
+thread PedestrianButtonThread
+	features
+		buttonState: in event data port ButtonState;
+end PedestrianButtonThread;
+
+thread implementation PedestrianButtonThread.impl
+end PedestrianButtonThread.impl;
+
+thread LightSensorThread
+	features
+		checkLight: in data port CheckLight;
+end LightSensorThread;
+
+thread implementation LightSensorThread.impl
+end LightSensorThread.impl;
+
+thread ModeThread
+    features
+        checkLight: in data port CheckLight;
+        lightMode: out data port LightMode;
+    end ModeThread;
+
+thread implementation ModeThread.impl
+end ModeThread.impl;
+
+thread PedestrianStateThread
+    features
+        pedestrian_input: in event data port ButtonState;
+        lightMode: out data port LightMode;
+        pedestrian_output: out data port PedestrianLightColor;
+    end PedestrianStateThread;
+
+thread implementation PedestrianStateThread.impl
+end PedestrianStateThread.impl;
+
+thread TrafficStateThread
+    features
+        car_input: in event data port CarCount;
+        lightMode: out data port LightMode;
+        traffic_output: out data port TrafficLightColor;
+    end TrafficStateThread;
+
+thread implementation TrafficStateThread.impl
+end TrafficStateThread.impl;
+
+
+-- Define the processor
+processor CPU
+  features
+    canBusAccess: requires bus access CAN;
+end CPU;
+
+processor implementation CPU.impl
+  subcomponents
+    ram: memory RAM.impl;
+  end CPU.impl;
+
+-- Define the processes
+process ModeProcess
+    features
+        lightSensorThread_checkLight: in data port CheckLight;
+        modeThread_currentMode: out data port LightMode;
+    end ModeProcess;
+
+process implementation ModeProcess.impl
+    subcomponents
+        lightSensorThread: thread LightSensorThread.impl;
+        modeThread: thread ModeThread.impl;
+    connections
+        conn1: port lightSensorThread_checkLight -> modeThread.checkLight ;
+        conn2: port modeThread.lightMode -> modeThread_currentMode;
+    end ModeProcess.impl;
+
+process TrafficProcess
+    features
+        carSensorThread_carCount: in event data port CarCount;
+        trafficStateThread_traffic_output: out data port TrafficLightColor;
+        trafficStateThread_mode: in data port LightMode;
+    end TrafficProcess;
+
+process PedestrianProcess
+    features
+        pedestrianButtonThread_buttonState: in event data port ButtonState;
+        pedestrianStateThread_pedestrian_output: out data port PedestrianLightColor;
+        pedestrianStateThread_mode: in data port LightMode;
+    end PedestrianProcess;
+
+process implementation TrafficProcess.impl
+subcomponents
+  carSensorThread: thread CarSensorThread.impl;
+  trafficStateThread: thread TrafficStateThread.impl;
+connections
+  conn1: port carSensorThread_carCount -> carSensorThread.carCount;
+  conn2: port trafficStateThread.traffic_output -> trafficStateThread_traffic_output;
+end TrafficProcess.impl;
+
+process implementation PedestrianProcess.impl
+  subcomponents
+    pedestrianButtonThread: thread PedestrianButtonThread.impl;
+    pedestrianStateThread: thread PedestrianStateThread.impl;
+	connections
+		conn1: port pedestrianButtonThread_buttonState -> pedestrianButtonThread.buttonState;
+		conn2: port pedestrianStateThread.pedestrian_output -> pedestrianStateThread_pedestrian_output;
+end PedestrianProcess.impl;
+
+-- Define the system
+system TrafficSystem
+end TrafficSystem;
+
+system implementation TrafficSystem.impl
+subcomponents
+    cpu: processor CPU.impl;
+    carSensor: device CarSensor.impl;
+    pedestrianButton: device PedestrianButton.impl;
+    pedestrianLight: device PedestrianLight.impl;
+    lightSensor: device LightSensor.impl;
+    trafficLights: device TrafficLights.impl;
+    canBus: bus CAN.impl;
+    trafficProcess: process TrafficProcess.impl;
+    pedestrianProcess: process PedestrianProcess.impl;
+    modeProcess: process ModeProcess.impl;
+connections
+    eth1 : bus access cpu.canBusAccess -> canBus;
+    c1: port carSensor.detected -> trafficProcess.carSensorThread_carCount;
+    c2: port trafficProcess.trafficStateThread_traffic_output -> trafficLights.state;
+    c3: port pedestrianButton.pressed -> pedestrianProcess.pedestrianButtonThread_buttonState;
+    c4: port pedestrianProcess.pedestrianStateThread_pedestrian_output -> pedestrianLight.state;
+    c5: port lightSensor.checkLight -> modeProcess.lightSensorThread_checkLight;
+    c6: port modeProcess.modeThread_currentMode -> trafficProcess.trafficStateThread_mode;
+    c7: port modeProcess.modeThread_currentMode -> pedestrianProcess.pedestrianStateThread_mode;
+properties
+	Actual_Processor_Binding => (reference(cpu)) applies to trafficProcess;
+	Actual_Processor_Binding => (reference(cpu)) applies to pedestrianProcess;
+	Actual_Processor_Binding => (reference(cpu)) applies to modeProcess;
+	Actual_Connection_Binding => (reference(canBus)) applies to eth1;
+	Actual_Connection_Binding => (reference(canBus)) applies to c1;
+	Actual_Connection_Binding => (reference(canBus)) applies to c2;
+	Actual_Connection_Binding => (reference(canBus)) applies to c3;
+	Actual_Connection_Binding => (reference(canBus)) applies to c4;
+	Actual_Connection_Binding => (reference(canBus)) applies to c5;
+	Actual_Connection_Binding => (reference(canBus)) applies to c6;
+	Actual_Connection_Binding => (reference(canBus)) applies to c7;
+end TrafficSystem.impl;
+
+end syst;
