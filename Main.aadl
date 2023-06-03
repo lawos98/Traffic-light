@@ -1,0 +1,280 @@
+package Main
+public
+	with Devices;
+	with Processes;
+	with SEI;
+	with Data_Types;
+	
+	system ElectrialPowerSupply
+		features
+			output: out feature Data_Types::Electricity;
+		properties
+			SEI::GrossWeight => 1.2kg;
+			SEI::PowerSupply => 100.0W applies to output;
+	end ElectrialPowerSupply;
+
+	system ElectricBattery
+		features
+			input: in feature Data_Types::Electricity;
+			output: out feature Data_Types::Electricity;
+		properties
+			SEI::GrossWeight => 0.9kg;
+			SEI::PowerCapacity => 20.0KW;
+	end ElectricBattery;
+	
+	-- Define the system
+	system TrafficSystem
+		properties
+			SEI::MIPSCapacity => 5000.0 mips;
+			SEI::NetWeight => 0.35kg;
+			SEI::WeightLimit => 250.0kg;
+	end TrafficSystem;
+
+	system implementation TrafficSystem.impl
+		subcomponents
+			epsu: system ElectrialPowerSupply;
+			battery: system ElectricBattery;
+			
+	    cpu: processor Processes::CPU.impl;
+	    eth: bus Devices::Ethernet.impl;
+	    ram: memory Devices::RAM.impl;
+	    
+	    carSensor_1: device Devices::CarSensor.impl_1;
+	    carSensor_2: device Devices::CarSensor.impl_2;
+	    carSensor_3: device Devices::CarSensor.impl_3;
+	    carSensor_4: device Devices::CarSensor.impl_4;
+	    
+	    pedestrianButton_1: device Devices::PedestrianButton.impl_1;
+	    pedestrianButton_2: device Devices::PedestrianButton.impl_2;
+	    pedestrianButton_3: device Devices::PedestrianButton.impl_3;
+	    pedestrianButton_4: device Devices::PedestrianButton.impl_4;
+	    
+	    pedestrianLight_1: device Devices::PedestrianLight.impl_1;
+	    pedestrianLight_2: device Devices::PedestrianLight.impl_2;
+	    pedestrianLight_3: device Devices::PedestrianLight.impl_3;
+	    pedestrianLight_4: device Devices::PedestrianLight.impl_4;
+	    
+	    trafficLight_1: device Devices::TrafficLight.impl_1;
+	    trafficLight_2: device Devices::TrafficLight.impl_2;
+	    trafficLight_3: device Devices::TrafficLight.impl_3;
+	    trafficLight_4: device Devices::TrafficLight.impl_4;
+	    
+	    lightSensor: device Devices::LightSensor.impl;
+	    watch: device Devices::Watch.impl;
+	    gps: device Devices::GPS.impl;
+	    
+	    trafficProcess: process Processes::TrafficProcess.impl;
+	    pedestrianProcess: process Processes::PedestrianProcess.impl;
+	    modeProcess: process Processes::ModeProcess.impl;
+	    controlProcess: process Processes::ControlProcess.impl;
+	    
+		connections
+			psupply: feature epsu.output -> battery.input;
+			p1: feature battery.output -> cpu.power;
+			p2: feature battery.output -> eth.power;
+			p3: feature battery.output -> ram.power;
+			
+			p4: feature battery.output -> carSensor_1.power;
+			p5: feature battery.output -> carSensor_2.power;
+			p6: feature battery.output -> carSensor_3.power;
+			p7: feature battery.output -> carSensor_4.power;
+			
+			p8: feature battery.output -> pedestrianButton_1.power;
+			p9: feature battery.output -> pedestrianButton_2.power;
+			p10: feature battery.output -> pedestrianButton_3.power;
+			p11: feature battery.output -> pedestrianButton_4.power;
+			
+			p12: feature battery.output -> pedestrianLight_1.power;
+			p13: feature battery.output -> pedestrianLight_2.power;
+			p14: feature battery.output -> pedestrianLight_3.power;
+			p15: feature battery.output -> pedestrianLight_4.power;
+			
+			p16: feature battery.output -> lightSensor.power;
+			p17: feature battery.output -> watch.power;
+			p18: feature battery.output -> gps.power;
+			
+	    e1 : bus access eth <-> cpu.ethernetAccess;
+	    e2 : bus access eth <-> ram.bus_access;
+	    
+	    e3 : bus access eth <-> carSensor_1.bus_access;
+	    e4 : bus access eth <-> carSensor_2.bus_access;
+	    e5 : bus access eth <-> carSensor_3.bus_access;
+	    e6 : bus access eth <-> carSensor_4.bus_access;
+	    
+	    e7 : bus access eth -> pedestrianButton_1.bus_access;
+	    e8 : bus access eth -> pedestrianButton_1.bus_access;
+	    e9 : bus access eth -> pedestrianButton_1.bus_access;
+	    e10 : bus access eth <-> pedestrianButton_1.bus_access;
+	    
+	    e11 : bus access eth <-> pedestrianLight_1.bus_access;
+	    e12 : bus access eth <-> pedestrianLight_2.bus_access;
+	    e13 : bus access eth <-> pedestrianLight_3.bus_access;
+	    e14 : bus access eth <-> pedestrianLight_4.bus_access;
+	    
+	    e15 : bus access eth <-> trafficLight_1.bus_access;
+	    e16 : bus access eth <-> trafficLight_2.bus_access;
+	    e17 : bus access eth <-> trafficLight_3.bus_access;
+	    e18 : bus access eth <-> trafficLight_4.bus_access;
+	    
+	    e19 : bus access eth <-> lightSensor.bus_access;
+	    e20 : bus access eth <-> watch.bus_access;
+	    e21 : bus access eth <-> gps.bus_access;
+	    
+	    
+	    c1: port carSensor_1.carCount -> controlProcess.carCount_1;
+	    c2: port carSensor_2.carCount-> controlProcess.carCount_2;
+	    c3: port carSensor_3.carCount -> controlProcess.carCount_3;
+	    c4: port carSensor_4.carCount -> controlProcess.carCount_4;
+	    
+	    c5: port trafficProcess.traffic_output_1 -> trafficLight_1.state_input;
+	    c6: port trafficProcess.traffic_output_2 -> trafficLight_2.state_input;
+	    c7: port trafficProcess.traffic_output_3 -> trafficLight_3.state_input;
+	    c8: port trafficProcess.traffic_output_4 -> trafficLight_4.state_input;
+	    
+	    c9: port controlProcess.traffic_output -> trafficProcess.traffic_input;
+	    c10: port trafficProcess.traffic_output  -> controlProcess.traffic_input;
+	    
+	    c11: port trafficLight_1.state_output -> trafficProcess.traffic_input_1;
+	    c12: port trafficLight_2.state_output -> trafficProcess.traffic_input_2;
+	    c13: port trafficLight_3.state_output -> trafficProcess.traffic_input_3;
+	    c14: port trafficLight_4.state_output -> trafficProcess.traffic_input_4;
+	    
+	    c15: port pedestrianButton_1.pressed -> controlProcess.buttonState_1;
+	    c16: port pedestrianButton_2.pressed -> controlProcess.buttonState_2;
+	    c17: port pedestrianButton_3.pressed -> controlProcess.buttonState_3;
+	    c18: port pedestrianButton_4.pressed -> controlProcess.buttonState_4;
+	    
+	    c19: port pedestrianProcess.pedestrian_output_1 -> pedestrianLight_1.state_input;
+	    c20: port pedestrianProcess.pedestrian_output_2 -> pedestrianLight_2.state_input;
+	    c21: port pedestrianProcess.pedestrian_output_3 -> pedestrianLight_3.state_input;
+	    c22: port pedestrianProcess.pedestrian_output_4 -> pedestrianLight_4.state_input;
+	    
+	    c23: port controlProcess.pedestrian_output -> pedestrianProcess.pedestrian_input;
+	    c24: port pedestrianProcess.pedestrian_output  -> controlProcess.pedestrian_input;
+	    
+	    c25: port pedestrianLight_1.state_output -> pedestrianProcess.pedestrian_input_1;
+	    c26: port pedestrianLight_2.state_output -> pedestrianProcess.pedestrian_input_2;
+	    c27: port pedestrianLight_3.state_output -> pedestrianProcess.pedestrian_input_3;
+	    c28: port pedestrianLight_4.state_output -> pedestrianProcess.pedestrian_input_4;
+	    
+	    c29: port lightSensor.checkLight -> modeProcess.lightPower;
+	    c30: port modeProcess.lightMode -> controlProcess.lightMode;
+	    c31: port watch.time -> modeProcess.time;
+	    c32: port gps.position -> modeProcess.position;
+
+		properties
+			
+		Actual_Processor_Binding => (reference(cpu)) applies to trafficProcess;
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianProcess;
+		Actual_Processor_Binding => (reference(cpu)) applies to modeProcess;
+		Actual_Processor_Binding => (reference(cpu)) applies to controlProcess;
+		
+		Actual_Memory_Binding => (reference(ram))applies to trafficProcess;
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianProcess;
+		Actual_Memory_Binding => (reference(ram))applies to modeProcess;
+		Actual_Memory_Binding => (reference(ram))applies to controlProcess;
+		
+		Actual_Processor_Binding => (reference(cpu)) applies to carSensor_1;
+		Actual_Processor_Binding => (reference(cpu)) applies to carSensor_2;
+		Actual_Processor_Binding => (reference(cpu)) applies to carSensor_3;
+		Actual_Processor_Binding => (reference(cpu)) applies to carSensor_4;
+		
+		Actual_Memory_Binding => (reference(ram))applies to carSensor_1;
+		Actual_Memory_Binding => (reference(ram))applies to carSensor_2;
+		Actual_Memory_Binding => (reference(ram))applies to carSensor_3;
+		Actual_Memory_Binding => (reference(ram))applies to carSensor_4;
+		
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianButton_1;
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianButton_2;
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianButton_3;
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianButton_4;
+		
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianButton_1;
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianButton_2;
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianButton_3;
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianButton_4;
+		
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianLight_1;
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianLight_2;
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianLight_3;
+		Actual_Processor_Binding => (reference(cpu)) applies to pedestrianLight_4;
+		
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianLight_1;
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianLight_2;
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianLight_3;
+		Actual_Memory_Binding => (reference(ram))applies to pedestrianLight_4;
+		
+		Actual_Processor_Binding => (reference(cpu)) applies to trafficLight_1;
+		Actual_Processor_Binding => (reference(cpu)) applies to trafficLight_2;
+		Actual_Processor_Binding => (reference(cpu)) applies to trafficLight_3;
+		Actual_Processor_Binding => (reference(cpu)) applies to trafficLight_4;
+		
+		Actual_Memory_Binding => (reference(ram))applies to trafficLight_1;
+		Actual_Memory_Binding => (reference(ram))applies to trafficLight_2;
+		Actual_Memory_Binding => (reference(ram))applies to trafficLight_3;
+		Actual_Memory_Binding => (reference(ram))applies to trafficLight_4;
+		
+		Actual_Processor_Binding => (reference(cpu)) applies to lightSensor;
+		Actual_Processor_Binding => (reference(cpu)) applies to watch;
+		Actual_Processor_Binding => (reference(cpu)) applies to gps;
+		
+		Actual_Memory_Binding => (reference(ram))applies to lightSensor;
+		Actual_Memory_Binding => (reference(ram))applies to watch;
+		Actual_Memory_Binding => (reference(ram))applies to gps;
+		
+		Actual_Connection_Binding => (reference(eth)) applies to e1;
+		Actual_Connection_Binding => (reference(eth)) applies to e2;
+		Actual_Connection_Binding => (reference(eth)) applies to e3;
+		Actual_Connection_Binding => (reference(eth)) applies to e4;
+		Actual_Connection_Binding => (reference(eth)) applies to e5;
+		Actual_Connection_Binding => (reference(eth)) applies to e6;
+		Actual_Connection_Binding => (reference(eth)) applies to e7;
+		Actual_Connection_Binding => (reference(eth)) applies to e8;
+		Actual_Connection_Binding => (reference(eth)) applies to e9;
+		Actual_Connection_Binding => (reference(eth)) applies to e10;
+		Actual_Connection_Binding => (reference(eth)) applies to e11;
+		Actual_Connection_Binding => (reference(eth)) applies to e12;
+		Actual_Connection_Binding => (reference(eth)) applies to e13;
+		Actual_Connection_Binding => (reference(eth)) applies to e14;
+		Actual_Connection_Binding => (reference(eth)) applies to e15;
+		Actual_Connection_Binding => (reference(eth)) applies to e16;
+		Actual_Connection_Binding => (reference(eth)) applies to e17;
+		Actual_Connection_Binding => (reference(eth)) applies to e18;
+		Actual_Connection_Binding => (reference(eth)) applies to e19;
+		Actual_Connection_Binding => (reference(eth)) applies to e20;
+		Actual_Connection_Binding => (reference(eth)) applies to e21;
+		
+		Actual_Connection_Binding => (reference(eth)) applies to c1;
+		Actual_Connection_Binding => (reference(eth)) applies to c2;
+		Actual_Connection_Binding => (reference(eth)) applies to c3;
+		Actual_Connection_Binding => (reference(eth)) applies to c4;
+		Actual_Connection_Binding => (reference(eth)) applies to c5;
+		Actual_Connection_Binding => (reference(eth)) applies to c6;
+		Actual_Connection_Binding => (reference(eth)) applies to c7;
+		Actual_Connection_Binding => (reference(eth)) applies to c8;
+		Actual_Connection_Binding => (reference(eth)) applies to c9;
+		Actual_Connection_Binding => (reference(eth)) applies to c10;
+		Actual_Connection_Binding => (reference(eth)) applies to c11;
+		Actual_Connection_Binding => (reference(eth)) applies to c12;
+		Actual_Connection_Binding => (reference(eth)) applies to c13;
+		Actual_Connection_Binding => (reference(eth)) applies to c14;
+		Actual_Connection_Binding => (reference(eth)) applies to c15;
+		Actual_Connection_Binding => (reference(eth)) applies to c16;
+		Actual_Connection_Binding => (reference(eth)) applies to c17;
+		Actual_Connection_Binding => (reference(eth)) applies to c18;
+		Actual_Connection_Binding => (reference(eth)) applies to c19;
+		Actual_Connection_Binding => (reference(eth)) applies to c20;
+		Actual_Connection_Binding => (reference(eth)) applies to c21;
+		Actual_Connection_Binding => (reference(eth)) applies to c22;
+		Actual_Connection_Binding => (reference(eth)) applies to c23;
+		Actual_Connection_Binding => (reference(eth)) applies to c24;
+		Actual_Connection_Binding => (reference(eth)) applies to c25;
+		Actual_Connection_Binding => (reference(eth)) applies to c26;
+		Actual_Connection_Binding => (reference(eth)) applies to c27;
+		Actual_Connection_Binding => (reference(eth)) applies to c28;
+		
+end TrafficSystem.impl;
+
+
+end Main;
+

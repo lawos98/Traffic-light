@@ -1,0 +1,177 @@
+package Devices
+public
+	with Data_Types;
+	with SEI;
+
+	-- Define the bus
+	bus Ethernet
+		features
+			power: in feature Data_types::Electricity;
+		properties
+			SEI::PowerBudget => 0.8w applies to power;
+			SEI::GrossWeight => 0.1kg;
+			SEI::BandWidthCapacity => 200.0 KBytesps;
+	end Ethernet;
+
+	bus implementation Ethernet.impl
+	end Ethernet.impl;
+
+	-- Define the memory
+	memory RAM
+		features
+			bus_access: requires bus access Ethernet;
+			power: in feature Data_types::Electricity;
+		properties
+			SEI::PowerBudget => 0.8w applies to power;
+			SEI::GrossWeight => 0.05kg;
+	end RAM;
+
+	memory implementation RAM.impl
+	end RAM.impl;
+
+	-- Define the devices
+	device CarSensor
+	    features
+	        carCount: out data port Data_Types::CarCount;
+	        bus_access: requires bus access Ethernet;
+	        power: in feature Data_types::Electricity;
+	   properties
+			SEI::GrossWeight => 0.3kg;
+			SEI::PowerBudget => 0.8w applies to power;
+			Period => 25ms;
+			Dispatch_Protocol => Periodic;
+	end CarSensor;
+
+	device implementation CarSensor.impl_1
+	end CarSensor.impl_1;
+
+	device implementation CarSensor.impl_2
+	end CarSensor.impl_2;
+
+	device implementation CarSensor.impl_3
+	end CarSensor.impl_3;
+
+	device implementation CarSensor.impl_4
+	end CarSensor.impl_4;
+
+	device PedestrianButton
+	    features
+	        pressed: out data port Data_Types::ButtonState;
+	        bus_access: requires bus access Ethernet.impl;
+	    	power: in feature Data_types::Electricity;
+	   	properties
+			SEI::GrossWeight => 0.5kg;
+			SEI::PowerBudget => 1.2w applies to power;
+			Period => 25ms;
+			Dispatch_Protocol => Periodic;
+	    end PedestrianButton;
+
+	device implementation PedestrianButton.impl_1
+	end PedestrianButton.impl_1;
+
+	device implementation PedestrianButton.impl_2
+	end PedestrianButton.impl_2;
+
+	device implementation PedestrianButton.impl_3
+	end PedestrianButton.impl_3;
+
+	device implementation PedestrianButton.impl_4
+	end PedestrianButton.impl_4;
+
+	device PedestrianLight
+	    features
+	        state_input: in data port Data_Types::PedestrianLightColor;
+	        state_output: out data port Data_Types::PedestrianLightColor;
+	        bus_access: requires bus access Ethernet;
+	        power: in feature Data_types::Electricity;
+	   	properties
+			SEI::GrossWeight => 20.0kg;
+			SEI::PowerBudget => 10.0w applies to power;
+			Period => 25ms;
+			Dispatch_Protocol => Periodic;
+	    end PedestrianLight;
+
+	device implementation PedestrianLight.impl_1
+	end PedestrianLight.impl_1;
+
+	device implementation PedestrianLight.impl_2
+	end PedestrianLight.impl_2;
+
+	device implementation PedestrianLight.impl_3
+	end PedestrianLight.impl_3;
+
+	device implementation PedestrianLight.impl_4
+	end PedestrianLight.impl_4;
+
+	device LightSensor
+	    features
+	        checkLight: out data port Data_Types::LightPower;
+	        bus_access: requires bus access Ethernet;
+	        power: in feature Data_types::Electricity;
+	   	properties
+			SEI::GrossWeight => 0.5kg;
+			SEI::PowerBudget => 0.5w applies to power;
+			Period => 25ms;
+			Dispatch_Protocol => Periodic;
+	    end LightSensor;
+
+	device implementation LightSensor.impl
+	end LightSensor.impl;
+
+	device TrafficLight
+	    features
+	        state_input: in data port Data_Types::TrafficLightColor;
+	        state_output: out data port Data_Types::TrafficLightColor;
+	        bus_access: requires bus access Ethernet;
+	        power: in feature Data_types::Electricity;
+	   	properties
+			SEI::GrossWeight => 30.5kg;
+			SEI::PowerBudget => 14.7w applies to power;
+			Period => 25ms;
+			Dispatch_Protocol => Periodic;
+	    end TrafficLight;
+
+	device implementation TrafficLight.impl_1
+	end TrafficLight.impl_1;
+
+	device implementation TrafficLight.impl_2
+	end TrafficLight.impl_2;
+
+	device implementation TrafficLight.impl_3
+	end TrafficLight.impl_3;
+
+	device implementation TrafficLight.impl_4
+	end TrafficLight.impl_4;
+
+	device Watch
+	    features
+	        time: out data port Data_Types::Time;
+	        bus_access: requires bus access Ethernet;
+	        power: in feature Data_types::Electricity;
+	   	properties
+			SEI::GrossWeight => 0.2kg;
+			SEI::PowerBudget => 0.2w applies to power;
+			Period => 25ms;
+			Dispatch_Protocol => Periodic;
+	    end Watch;
+
+	device implementation Watch.impl
+	end Watch.impl;
+
+	device GPS
+	    features
+	        position: out data port Data_Types::Position;  -- Assuming Location is a data type you have defined
+	        bus_access: requires bus access Ethernet;
+	        power: in feature Data_types::Electricity;
+	   	properties
+			SEI::GrossWeight => 0.1kg;
+			SEI::PowerBudget => 1.4w applies to power;
+			Period => 25ms;
+			Dispatch_Protocol => Periodic;
+	    end GPS;
+
+	device implementation GPS.impl
+	end GPS.impl;
+
+	-- Rest of your package definition...
+end Devices;

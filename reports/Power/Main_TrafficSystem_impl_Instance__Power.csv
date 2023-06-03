@@ -1,0 +1,12 @@
+
+
+Computing Electrical Power for battery,
+Capacity: 20000.0 W,
+Supply: 100.0 W,100.0 W from epsu,
+Budget: 52.5 W,800.0 mW for cpu, 800.0 mW for eth, 800.0 mW for ram, 800.0 mW for carSensor_1, 800.0 mW for carSensor_2, 800.0 mW for carSensor_3, 800.0 mW for carSensor_4, 1200.0 mW for pedestrianButton_1, 1200.0 mW for pedestrianButton_2, 1200.0 mW for pedestrianButton_3, 1200.0 mW for pedestrianButton_4, 10.0 W for pedestrianLight_1, 10.0 W for pedestrianLight_2, 10.0 W for pedestrianLight_3, 10.0 W for pedestrianLight_4, 500.0 mW for lightSensor, 200.0 mW for watch, 1400.0 mW for gps,
+battery power budget total 52.5 W within capacity 20000.0 W,
+budget total 52.5 W within supply 100.0 W,
+,
+
+
+

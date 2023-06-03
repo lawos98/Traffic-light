@@ -1,0 +1,80 @@
+package Data_Types
+public
+	with Data_Model;
+	with Base_Types;
+	
+	abstract Electricity
+	end Electricity;
+
+	abstract Mass
+	end Mass;
+	
+	data CarCount
+		properties
+			Data_Model::base_type => (classifier (Base_Types::Integer));
+			Data_Size => 10 Bytes;
+    end CarCount;
+
+	data LightPower
+    	properties
+        	Data_Model::base_type => (classifier (Base_Types::Integer));
+        	Data_Size => 10 Bytes;
+    end LightPower;
+
+	data ButtonState
+    	properties
+        	Data_Model::base_type => (classifier (Base_Types::Boolean));
+        	Data_Size => 1 Bits;
+    end ButtonState;
+
+	data TrafficLightColor
+    	properties
+        	Data_Model::Enumerators => ("Red", "Yellow", "Green");
+        	Data_Model::base_type => (classifier (Base_Types::Integer));
+        	Data_Size => 10 Bytes;
+    end TrafficLightColor;
+    
+    data TrafficLightColorArray
+	  properties
+	    Data_Model::Dimension => (4);
+	   	Data_Model::Data_Representation => Array;
+	    Data_Model::Base_Type => (classifier (TrafficLightColor));
+	    Data_Size => 40 Bytes;
+	  end TrafficLightColorArray;
+
+	data PedestrianLightColor
+    	properties
+        	Data_Model::Enumerators => ("Red", "Green");
+        	Data_Model::base_type => (classifier (Base_Types::Integer));
+        	Data_Size => 10 Bytes;
+    end PedestrianLightColor;
+    
+	data PedestrianLightColorArray
+	  properties
+	    Data_Model::Dimension => (4);
+	    Data_Model::Data_Representation => Array;
+	    Data_Model::Base_Type => (classifier (PedestrianLightColor));
+	    Data_Size => 40 Bytes;
+	  end PedestrianLightColorArray;
+    
+	data LightMode
+    	properties
+        	Data_Model::Enumerators => ("Day", "Night");
+        	Data_Model::base_type => (classifier (Base_Types::Integer));
+        	Data_Size => 10 Bytes;
+    end LightMode;
+    
+    data Position
+		properties
+			Data_Model::base_type => (classifier (Base_Types::Float));
+			Data_Model::Dimension => (2);
+			Data_Size => 200 Bytes;
+	end Position;
+
+	data Time
+		properties
+			Data_Model::base_type => (classifier (Base_Types::Integer));
+			Data_Size => 100 Bytes;
+	end Time;
+	
+end Data_Types;

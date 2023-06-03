@@ -1,0 +1,239 @@
+package Threads
+public
+	with Data_Types;
+	with SEI;
+	
+	thread CarSensorThread
+		features
+			carCount_output: out data port Data_Types::CarCount;
+			carCount_input: in data port Data_Types::CarCount;
+		properties
+			SEI::MIPSBudget => 69.9 mips;
+			Stack_Size => 25 Kbyte;
+			Data_size => 250 KByte;
+			Period => 20ms;
+			Compute_Execution_Time => 5ms .. 7ms;
+		end CarSensorThread;
+
+	thread implementation CarSensorThread.impl_1
+	end CarSensorThread.impl_1;
+	
+	thread implementation CarSensorThread.impl_2
+	end CarSensorThread.impl_2;
+	
+	thread implementation CarSensorThread.impl_3
+	end CarSensorThread.impl_3;
+	
+	thread implementation CarSensorThread.impl_4
+	end CarSensorThread.impl_4;
+
+	thread PedestrianButtonThread
+		features
+			buttonState_output: out data port Data_Types::ButtonState;
+			buttonState_input: in data port Data_Types::ButtonState;
+		properties
+			SEI::MIPSBudget => 51.9 mips;
+			Stack_Size => 25 Kbyte;
+			Data_size => 250 KByte;
+			Period => 20ms;
+			Compute_Execution_Time => 5ms .. 7ms;
+		end PedestrianButtonThread;
+
+	thread implementation PedestrianButtonThread.impl_1
+	end PedestrianButtonThread.impl_1;
+	
+	thread implementation PedestrianButtonThread.impl_2
+	end PedestrianButtonThread.impl_2;
+	
+	thread implementation PedestrianButtonThread.impl_3
+	end PedestrianButtonThread.impl_3;
+	
+	thread implementation PedestrianButtonThread.impl_4
+	end PedestrianButtonThread.impl_4;
+
+	thread LightThread
+	    features
+	        lightPower: in data port Data_Types::LightPower;
+	        time: in data port Data_Types::Time;
+	        position: in data port Data_Types::Position;
+	        lightMode: out data port Data_Types::LightMode;
+		properties
+			SEI::MIPSBudget => 49.7 mips;
+			Stack_Size => 25 Kbyte;
+			Data_size => 50 KByte;
+			Period => 20ms;
+			Compute_Execution_Time => 2ms .. 6ms;
+	end LightThread;
+
+	thread implementation LightThread.impl
+	end LightThread.impl;
+
+	thread PedestrianStateThread
+	    features
+	        pedestrian_input: in data port Data_Types::PedestrianLightColor;
+	        pedestrian_output: out data port Data_Types::PedestrianLightColor;
+		properties
+			SEI::MIPSBudget => 32.8 mips;
+			Stack_Size => 50 Kbyte;
+			Data_size => 100 KByte;
+			Period => 50ms;
+			Compute_Execution_Time => 1ms .. 10ms;
+	    end PedestrianStateThread;
+
+	thread implementation PedestrianStateThread.impl_1
+	end PedestrianStateThread.impl_1;
+	
+	thread implementation PedestrianStateThread.impl_2
+	end PedestrianStateThread.impl_2;
+	
+	thread implementation PedestrianStateThread.impl_3
+	end PedestrianStateThread.impl_3;
+	
+	thread implementation PedestrianStateThread.impl_4
+	end PedestrianStateThread.impl_4;
+
+	thread TrafficStateThread
+	    features
+	        traffic_input: in data port Data_Types::TrafficLightColor;
+	        traffic_output: out data port Data_Types::TrafficLightColor;
+		properties
+			SEI::MIPSBudget => 33.2 mips;
+			Stack_Size => 50 Kbyte;
+			Data_size => 100 KByte;
+			Period => 50ms;
+			Compute_Execution_Time => 1ms .. 10ms;
+	end TrafficStateThread;
+
+	thread implementation TrafficStateThread.impl_1
+	end TrafficStateThread.impl_1;
+	
+	thread implementation TrafficStateThread.impl_2
+	end TrafficStateThread.impl_2;
+	
+	thread implementation TrafficStateThread.impl_3
+	end TrafficStateThread.impl_3;
+	
+	thread implementation TrafficStateThread.impl_4
+	end TrafficStateThread.impl_4;
+	
+	thread ControlThread
+		features
+	        traffic_output: out data port Data_Types::TrafficLightColorArray;
+	        traffic_input: in data port Data_Types::TrafficLightColorArray;
+	        pedestrian_output: out data port Data_Types::PedestrianLightColorArray;
+	        pedestrian_input: in data port Data_Types::PedestrianLightColorArray;
+	        
+	        buttonState_1: in data port Data_Types::ButtonState;
+	        buttonState_2: in data port Data_Types::ButtonState;
+	        buttonState_3: in data port Data_Types::ButtonState;
+	        buttonState_4: in data port Data_Types::ButtonState;
+	        
+	        carCount_1: in data port Data_Types::CarCount;
+	        carCount_2: in data port Data_Types::CarCount;
+	        carCount_3: in data port Data_Types::CarCount;
+	        carCount_4: in data port Data_Types::CarCount;
+	        
+	        lightMode: in data port Data_Types::LightMode;    
+		properties
+			SEI::MIPSBudget => 554.7 mips;
+			Stack_Size => 100 Kbyte;
+			Data_size => 200 KByte;
+			Period => 20ms;
+			Compute_Execution_Time => 2ms .. 8ms;
+	end ControlThread;
+	
+	thread implementation ControlThread.impl
+	end ControlThread.impl;
+	
+	thread TrafficMultiplexer
+		features
+			traffic_input_1: in data port Data_Types::TrafficLightColor;
+			traffic_input_2: in data port Data_Types::TrafficLightColor;
+			traffic_input_3: in data port Data_Types::TrafficLightColor;
+			traffic_input_4: in data port Data_Types::TrafficLightColor;
+			
+			traffic_output: out data port Data_Types::TrafficLightColorArray;
+		properties
+			SEI::MIPSBudget => 60.4 mips;
+			Stack_Size => 25 Kbyte;
+			Data_size => 250 KByte;
+			Period => 20ms;
+			Compute_Execution_Time => 5ms .. 7ms;
+	end TrafficMultiplexer;
+	
+	thread implementation TrafficMultiplexer.impl
+	end TrafficMultiplexer.impl;
+	
+	thread TrafficDemultiplexer
+		features
+			traffic_output_1: out data port Data_Types::TrafficLightColor;
+			traffic_output_2: out data port Data_Types::TrafficLightColor;
+			traffic_output_3: out data port Data_Types::TrafficLightColor;
+			traffic_output_4: out data port Data_Types::TrafficLightColor;
+			
+			traffic_input: in data port Data_Types::TrafficLightColorArray;
+		properties
+			SEI::MIPSBudget => 60.4 mips;
+			Stack_Size => 25 Kbyte;
+			Data_size => 250 KByte;
+			Period => 20ms;
+			Compute_Execution_Time => 5ms .. 7ms;
+	end TrafficDemultiplexer;
+	
+	thread implementation TrafficDemultiplexer.impl
+	end TrafficDemultiplexer.impl;
+	
+	thread PedestrianMultiplexer
+		features
+			pedestrian_input_1: in data port Data_Types::PedestrianLightColor;
+			pedestrian_input_2: in data port Data_Types::PedestrianLightColor;
+			pedestrian_input_3: in data port Data_Types::PedestrianLightColor;
+			pedestrian_input_4: in data port Data_Types::PedestrianLightColor;
+			
+			pedestrian_output: out data port Data_Types::PedestrianLightColorArray;
+		properties
+			SEI::MIPSBudget => 60.4 mips;
+			Stack_Size => 25 Kbyte;
+			Data_size => 250 KByte;
+			Period => 20ms;
+			Compute_Execution_Time => 5ms .. 7ms;
+	end PedestrianMultiplexer;
+	
+	thread implementation PedestrianMultiplexer.impl
+	end PedestrianMultiplexer.impl;
+	
+	thread PedestrianDemultiplexer
+		features
+			pedestrian_output_1: out data port Data_Types::PedestrianLightColor;
+			pedestrian_output_2: out data port Data_Types::PedestrianLightColor;
+			pedestrian_output_3: out data port Data_Types::PedestrianLightColor;
+			pedestrian_output_4: out data port Data_Types::PedestrianLightColor;
+			
+			pedestrian_input: in data port Data_Types::PedestrianLightColorArray;
+		properties
+			SEI::MIPSBudget => 60.4 mips;
+			Stack_Size => 25 Kbyte;
+			Data_size => 250 KByte;
+			Period => 20ms;
+			Compute_Execution_Time => 5ms .. 7ms;
+	end PedestrianDemultiplexer;
+	
+	thread implementation PedestrianDemultiplexer.impl
+	end PedestrianDemultiplexer.impl;
+
+end Threads;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

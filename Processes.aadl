@@ -1,0 +1,215 @@
+package Processes
+public
+	with Devices;
+	with Data_Types;
+	with Threads;
+	with SEI;
+		-- Define the processor
+	processor CPU
+	  features
+	    ethernetAccess: requires bus access Devices::ethernet;
+	    power: in feature Data_types::Electricity;
+	  properties
+			SEI::PowerBudget => 0.8w applies to power;
+			SEI::MIPSCapacity => 144.4 mips;
+			SEI::GrossWeight => 0.05kg;
+	end CPU;
+
+	processor implementation CPU.impl
+	end CPU.impl;
+
+	-- Define the processes
+	process ControlProcess
+		features
+	        traffic_output: out data port Data_Types::TrafficLightColorArray;
+	        traffic_input: in data port Data_Types::TrafficLightColorArray;
+	        
+	        pedestrian_output: out data port Data_Types::PedestrianLightColorArray;
+	        pedestrian_input: in data port Data_Types::PedestrianLightColorArray;
+	        
+	        buttonState_1: in data port Data_Types::ButtonState;
+	        buttonState_2: in data port Data_Types::ButtonState;
+	        buttonState_3: in data port Data_Types::ButtonState;
+	        buttonState_4: in data port Data_Types::ButtonState;
+	        
+	        carCount_1: in data port Data_Types::CarCount;
+	        carCount_2: in data port Data_Types::CarCount;
+	        carCount_3: in data port Data_Types::CarCount;
+	        carCount_4: in data port Data_Types::CarCount;
+			
+			lightMode: in event data port Data_Types::LightMode;
+		properties
+			SEI::MIPSBudget => 540.0 mips;
+	end ControlProcess;
+	
+	process implementation ControlProcess.impl
+		subcomponents
+			controlThread : thread Threads::ControlThread.impl;
+			
+			pedestrianButtonThread_1: thread Threads::PedestrianButtonThread.impl_1;
+	    	pedestrianButtonThread_2: thread Threads::PedestrianButtonThread.impl_2;
+	    	pedestrianButtonThread_3: thread Threads::PedestrianButtonThread.impl_3;
+	    	pedestrianButtonThread_4: thread Threads::PedestrianButtonThread.impl_4;
+	    	
+	    	carSensorThread_1: thread Threads::CarSensorThread.impl_1;
+	  		carSensorThread_2: thread Threads::CarSensorThread.impl_2;
+	  		carSensorThread_3: thread Threads::CarSensorThread.impl_3;
+	  		carSensorThread_4: thread Threads::CarSensorThread.impl_4;
+	  		
+		connections
+			c1: port controlThread.traffic_output -> traffic_output;
+			c2: port traffic_input -> controlThread.traffic_input ;
+			c3: port controlThread.pedestrian_output -> pedestrian_output;
+			c4: port pedestrian_input -> controlThread.pedestrian_input;
+			
+			c5: port buttonState_1 -> pedestrianButtonThread_1.buttonState_input;
+			c6: port buttonState_2 -> pedestrianButtonThread_2.buttonState_input;
+			c7: port buttonState_3 -> pedestrianButtonThread_3.buttonState_input;
+			c8: port buttonState_4 -> pedestrianButtonThread_4.buttonState_input;
+			
+			c9: port carCount_1 -> carSensorThread_1.carCount_input;
+			c10: port carCount_2 -> carSensorThread_2.carCount_input;
+			c11: port carCount_3 -> carSensorThread_3.carCount_input;
+			c12: port carCount_4 -> carSensorThread_4.carCount_input;
+			
+			c13: port pedestrianButtonThread_1.buttonState_output -> controlThread.buttonState_1;
+			c14: port pedestrianButtonThread_2.buttonState_output -> controlThread.buttonState_2;
+			c15: port pedestrianButtonThread_3.buttonState_output -> controlThread.buttonState_3;
+			c16: port pedestrianButtonThread_4.buttonState_output -> controlThread.buttonState_4;
+			
+			c17: port carSensorThread_1.carCount_output -> controlThread.carCount_1;
+			c18: port carSensorThread_2.carCount_output -> controlThread.carCount_2;
+			c19: port carSensorThread_3.carCount_output -> controlThread.carCount_3;
+			c20: port carSensorThread_4.carCount_output -> controlThread.carCount_4;
+
+			c21: port lightMode -> controlThread.lightMode;
+	end ControlProcess.impl;
+	
+	process ModeProcess
+    	features
+        	lightPower: in data port Data_Types::LightPower;
+        	time: in data port Data_Types::Time;
+	        position: in data port Data_Types::Position;
+        	lightMode: out data port Data_Types::LightMode;
+        properties
+			SEI::MIPSBudget => 54.0 mips;
+    end ModeProcess;
+
+	process implementation ModeProcess.impl
+		subcomponents	        
+			lightThread: thread Threads::LightThread.impl;
+		connections
+	        c1: port lightPower -> lightThread.lightPower ;
+	        c2: port lightThread.lightMode -> lightMode;
+	        c3: port time -> lightThread.time;
+	        c4: port position -> lightThread.position;
+	    end ModeProcess.impl;
+
+	process TrafficProcess
+	    features	        
+	        traffic_output_1: out data port Data_Types::TrafficLightColor;
+	        traffic_output_2: out data port Data_Types::TrafficLightColor;
+	        traffic_output_3: out data port Data_Types::TrafficLightColor;
+	        traffic_output_4: out data port Data_Types::TrafficLightColor;
+	        
+	        traffic_input_1: in data port Data_Types::TrafficLightColor;
+	        traffic_input_2: in data port Data_Types::TrafficLightColor;
+	        traffic_input_3:in data port Data_Types::TrafficLightColor;
+	        traffic_input_4: in data port Data_Types::TrafficLightColor;
+	        
+	        traffic_input: in data port Data_Types::TrafficLightColorArray;
+	        traffic_output: out data port Data_Types::TrafficLightColorArray;
+	    properties
+			SEI::MIPSBudget => 220.4 mips;
+	    end TrafficProcess;
+	    
+	process implementation TrafficProcess.impl
+		subcomponents
+	  		trafficStateThread_1: thread Threads::TrafficStateThread.impl_1;
+	  		trafficStateThread_2: thread Threads::TrafficStateThread.impl_2;
+	  		trafficStateThread_3: thread Threads::TrafficStateThread.impl_3;
+	  		trafficStateThread_4: thread Threads::TrafficStateThread.impl_4;
+	  		trafficDemultiplexer: thread Threads::TrafficDemultiplexer.impl;
+	  		trafficMultiplexer: thread Threads::TrafficMultiplexer.impl;
+	connections	  
+	  c1: port trafficStateThread_1.traffic_output -> traffic_output_1;
+	  c2: port trafficStateThread_2.traffic_output -> traffic_output_2;
+	  c3: port trafficStateThread_3.traffic_output -> traffic_output_3;
+	  c4: port trafficStateThread_4.traffic_output -> traffic_output_4;
+	  
+	  c5: port traffic_input_1 -> trafficStateThread_1.traffic_input;
+	  c6: port traffic_input_2 -> trafficStateThread_2.traffic_input;
+	  c7: port traffic_input_3 -> trafficStateThread_3.traffic_input;
+	  c8: port traffic_input_4 -> trafficStateThread_4.traffic_input;
+	  
+	  c9: port trafficStateThread_1.traffic_output -> trafficMultiplexer.traffic_input_1;
+	  c10: port trafficStateThread_2.traffic_output -> trafficMultiplexer.traffic_input_2;
+	  c11: port trafficStateThread_3.traffic_output -> trafficMultiplexer.traffic_input_3;
+	  c12: port trafficStateThread_4.traffic_output -> trafficMultiplexer.traffic_input_4;
+	  
+	  c13: port trafficMultiplexer.traffic_output -> traffic_output;
+	  
+	  c14: port trafficDemultiplexer.traffic_output_1 -> trafficStateThread_1.traffic_input;
+	  c15: port trafficDemultiplexer.traffic_output_2 -> trafficStateThread_2.traffic_input;
+	  c16: port trafficDemultiplexer.traffic_output_3 -> trafficStateThread_3.traffic_input;
+	  c17: port trafficDemultiplexer.traffic_output_4 -> trafficStateThread_4.traffic_input;
+	  
+	  c18: port traffic_input -> trafficDemultiplexer.traffic_input;
+	  
+	end TrafficProcess.impl;
+
+	process PedestrianProcess
+	    features	        
+	        pedestrian_input_1: in data port Data_Types::PedestrianLightColor;
+	        pedestrian_input_2: in data port Data_Types::PedestrianLightColor;
+	        pedestrian_input_3: in data port Data_Types::PedestrianLightColor;
+	        pedestrian_input_4: in data port Data_Types::PedestrianLightColor;
+	        
+	        pedestrian_output_1: out data port Data_Types::PedestrianLightColor;
+	        pedestrian_output_2: out data port Data_Types::PedestrianLightColor;
+	        pedestrian_output_3: out data port Data_Types::PedestrianLightColor;
+	        pedestrian_output_4: out data port Data_Types::PedestrianLightColor;
+	        
+	        pedestrian_input: in data port Data_Types::PedestrianLightColorArray;
+	        pedestrian_output: out data port Data_Types::PedestrianLightColorArray;
+	        
+	    properties
+			SEI::MIPSBudget => 220.2 mips;
+	    end PedestrianProcess;
+
+	process implementation PedestrianProcess.impl
+	  subcomponents	    
+	    pedestrianStateThread_1: thread Threads::PedestrianStateThread.impl_1;
+	    pedestrianStateThread_2: thread Threads::PedestrianStateThread.impl_2;
+	    pedestrianStateThread_3: thread Threads::PedestrianStateThread.impl_3;
+	    pedestrianStateThread_4: thread Threads::PedestrianStateThread.impl_4;
+	    pedestrianMultiplexer: thread Threads::PedestrianMultiplexer.impl;
+	    pedestrianDemultiplexer: thread Threads::PedestrianDemultiplexer.impl;
+	connections		
+		c1: port pedestrianStateThread_1.pedestrian_output -> pedestrian_output_1;
+		c2: port pedestrianStateThread_2.pedestrian_output -> pedestrian_output_2;
+		c3: port pedestrianStateThread_3.pedestrian_output -> pedestrian_output_3;
+		c4: port pedestrianStateThread_4.pedestrian_output -> pedestrian_output_4;
+		
+		c5: port pedestrian_input_1 -> pedestrianStateThread_1.pedestrian_input;
+		c6: port pedestrian_input_2 -> pedestrianStateThread_2.pedestrian_input;
+		c7: port pedestrian_input_3 -> pedestrianStateThread_3.pedestrian_input;
+		c8: port pedestrian_input_4 -> pedestrianStateThread_4.pedestrian_input;
+		
+		c9: port pedestrianStateThread_1.pedestrian_output -> pedestrianMultiplexer.pedestrian_input_1;
+	 	c10: port pedestrianStateThread_2.pedestrian_output -> pedestrianMultiplexer.pedestrian_input_2;
+	  	c11: port pedestrianStateThread_3.pedestrian_output -> pedestrianMultiplexer.pedestrian_input_3;
+	  	c12: port pedestrianStateThread_4.pedestrian_output -> pedestrianMultiplexer.pedestrian_input_4;
+	  
+	  	c13: port pedestrianMultiplexer.pedestrian_output -> pedestrian_output;
+	  
+	  	c14: port pedestrianDemultiplexer.pedestrian_output_1 -> pedestrianStateThread_1.pedestrian_input;
+	  	c15: port pedestrianDemultiplexer.pedestrian_output_2 -> pedestrianStateThread_2.pedestrian_input;
+	  	c16: port pedestrianDemultiplexer.pedestrian_output_3 -> pedestrianStateThread_3.pedestrian_input;
+	  	c17: port pedestrianDemultiplexer.pedestrian_output_4 -> pedestrianStateThread_4.pedestrian_input;
+	  	
+	  	c18: port pedestrian_input -> pedestrianDemultiplexer.pedestrian_input;
+	end PedestrianProcess.impl;
+	
+end Processes;
+

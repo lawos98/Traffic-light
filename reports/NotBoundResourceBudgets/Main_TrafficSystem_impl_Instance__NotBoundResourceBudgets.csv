@@ -1,0 +1,67 @@
+Not Bound Resource Budget Analysis Report
+
+Resource Summary: 
+**   System TrafficSystem_impl_Instance budgets over capacity: MIPS capacity 144.400 MIPS : MIPS budget 938.600 MIPS
+  1 out of 1 with MIPS capacity
+*   26 out of 28 with MIPS budget
+
+
+
+Detailed Processor MIPS Capacity Report 
+
+Component,Capacity
+processor cpu, 144.400 MIPS,
+Total, 144.400 MIPS,
+
+
+Detailed MIPS Budget Report 
+
+Component,Budget,Actual,Notes
+device carSensor_1, 0.000 MIPS,0.000 MIPS,
+device carSensor_2, 0.000 MIPS,0.000 MIPS,
+device carSensor_3, 0.000 MIPS,0.000 MIPS,
+device carSensor_4, 0.000 MIPS,0.000 MIPS,
+device pedestrianButton_1, 0.000 MIPS,0.000 MIPS,
+device pedestrianButton_2, 0.000 MIPS,0.000 MIPS,
+device pedestrianButton_3, 0.000 MIPS,0.000 MIPS,
+device pedestrianButton_4, 0.000 MIPS,0.000 MIPS,
+device pedestrianLight_1, 0.000 MIPS,0.000 MIPS,
+device pedestrianLight_2, 0.000 MIPS,0.000 MIPS,
+device pedestrianLight_3, 0.000 MIPS,0.000 MIPS,
+device pedestrianLight_4, 0.000 MIPS,0.000 MIPS,
+device trafficLight_1, 0.000 MIPS,0.000 MIPS,
+device trafficLight_2, 0.000 MIPS,0.000 MIPS,
+device trafficLight_3, 0.000 MIPS,0.000 MIPS,
+device trafficLight_4, 0.000 MIPS,0.000 MIPS,
+device lightSensor, 0.000 MIPS,0.000 MIPS,
+device watch, 0.000 MIPS,0.000 MIPS,
+device gps, 0.000 MIPS,0.000 MIPS,
+  thread trafficProcess.trafficStateThread_1,   33.200 MIPS,  28.880 MIPS,thread TrafficSystem_impl_Instance.trafficProcess.trafficStateThread_1 total 28.880 MIPS below budget 33.200 MIPS (13.0 % slack)
+  thread trafficProcess.trafficStateThread_2,   33.200 MIPS,  28.880 MIPS,thread TrafficSystem_impl_Instance.trafficProcess.trafficStateThread_2 total 28.880 MIPS below budget 33.200 MIPS (13.0 % slack)
+  thread trafficProcess.trafficStateThread_3,   33.200 MIPS,  28.880 MIPS,thread TrafficSystem_impl_Instance.trafficProcess.trafficStateThread_3 total 28.880 MIPS below budget 33.200 MIPS (13.0 % slack)
+  thread trafficProcess.trafficStateThread_4,   33.200 MIPS,  28.880 MIPS,thread TrafficSystem_impl_Instance.trafficProcess.trafficStateThread_4 total 28.880 MIPS below budget 33.200 MIPS (13.0 % slack)
+  thread trafficProcess.trafficDemultiplexer,   60.400 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.trafficProcess.trafficDemultiplexer total 50.540 MIPS below budget 60.400 MIPS (16.3 % slack)
+  thread trafficProcess.trafficMultiplexer,   60.400 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.trafficProcess.trafficMultiplexer total 50.540 MIPS below budget 60.400 MIPS (16.3 % slack)
+process trafficProcess, 220.400 MIPS,216.600 MIPS,process TrafficSystem_impl_Instance.trafficProcess total 216.600 MIPS below budget 220.400 MIPS (1.7 % slack)
+  thread pedestrianProcess.pedestrianStateThread_1,   32.800 MIPS,  28.880 MIPS,thread TrafficSystem_impl_Instance.pedestrianProcess.pedestrianStateThread_1 total 28.880 MIPS below budget 32.800 MIPS (12.0 % slack)
+  thread pedestrianProcess.pedestrianStateThread_2,   32.800 MIPS,  28.880 MIPS,thread TrafficSystem_impl_Instance.pedestrianProcess.pedestrianStateThread_2 total 28.880 MIPS below budget 32.800 MIPS (12.0 % slack)
+  thread pedestrianProcess.pedestrianStateThread_3,   32.800 MIPS,  28.880 MIPS,thread TrafficSystem_impl_Instance.pedestrianProcess.pedestrianStateThread_3 total 28.880 MIPS below budget 32.800 MIPS (12.0 % slack)
+  thread pedestrianProcess.pedestrianStateThread_4,   32.800 MIPS,  28.880 MIPS,thread TrafficSystem_impl_Instance.pedestrianProcess.pedestrianStateThread_4 total 28.880 MIPS below budget 32.800 MIPS (12.0 % slack)
+  thread pedestrianProcess.pedestrianMultiplexer,   60.400 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.pedestrianProcess.pedestrianMultiplexer total 50.540 MIPS below budget 60.400 MIPS (16.3 % slack)
+  thread pedestrianProcess.pedestrianDemultiplexer,   60.400 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.pedestrianProcess.pedestrianDemultiplexer total 50.540 MIPS below budget 60.400 MIPS (16.3 % slack)
+process pedestrianProcess, 220.200 MIPS,216.600 MIPS,process TrafficSystem_impl_Instance.pedestrianProcess total 216.600 MIPS below budget 220.200 MIPS (1.6 % slack)
+  thread modeProcess.lightThread,   49.700 MIPS,  43.320 MIPS,thread TrafficSystem_impl_Instance.modeProcess.lightThread total 43.320 MIPS below budget 49.700 MIPS (12.8 % slack)
+process modeProcess, 54.000 MIPS,43.320 MIPS,process TrafficSystem_impl_Instance.modeProcess total 43.320 MIPS below budget 54.000 MIPS (19.8 % slack)
+  thread controlProcess.controlThread,   554.700 MIPS,  57.760 MIPS,thread TrafficSystem_impl_Instance.controlProcess.controlThread total 57.760 MIPS below budget 554.700 MIPS (89.6 % slack)
+  thread controlProcess.pedestrianButtonThread_1,   51.900 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.controlProcess.pedestrianButtonThread_1 total 50.540 MIPS below budget 51.900 MIPS (2.6 % slack)
+  thread controlProcess.pedestrianButtonThread_2,   51.900 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.controlProcess.pedestrianButtonThread_2 total 50.540 MIPS below budget 51.900 MIPS (2.6 % slack)
+  thread controlProcess.pedestrianButtonThread_3,   51.900 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.controlProcess.pedestrianButtonThread_3 total 50.540 MIPS below budget 51.900 MIPS (2.6 % slack)
+  thread controlProcess.pedestrianButtonThread_4,   51.900 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.controlProcess.pedestrianButtonThread_4 total 50.540 MIPS below budget 51.900 MIPS (2.6 % slack)
+  thread controlProcess.carSensorThread_1,   69.900 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.controlProcess.carSensorThread_1 total 50.540 MIPS below budget 69.900 MIPS (27.7 % slack)
+  thread controlProcess.carSensorThread_2,   69.900 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.controlProcess.carSensorThread_2 total 50.540 MIPS below budget 69.900 MIPS (27.7 % slack)
+  thread controlProcess.carSensorThread_3,   69.900 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.controlProcess.carSensorThread_3 total 50.540 MIPS below budget 69.900 MIPS (27.7 % slack)
+  thread controlProcess.carSensorThread_4,   69.900 MIPS,  50.540 MIPS,thread TrafficSystem_impl_Instance.controlProcess.carSensorThread_4 total 50.540 MIPS below budget 69.900 MIPS (27.7 % slack)
+process controlProcess, 540.000 MIPS,462.080 MIPS,process TrafficSystem_impl_Instance.controlProcess total 462.080 MIPS below budget 540.000 MIPS (14.4 % slack)
+system epsu, 0.000 MIPS,0.000 MIPS,
+system battery, 0.000 MIPS,0.000 MIPS,
+Total, ,938.600 MIPS,
